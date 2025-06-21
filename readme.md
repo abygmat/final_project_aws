@@ -51,13 +51,15 @@ npm install
 
 Create a `.env` file in the root folder:
 
-```mongodb credentials
+mongodb credentials
+```
 PORT=5000
 MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret_key
 ```
 
-```aws s3 bucket credentials
+IAM user credentials
+```
 AWS_ACCESS_KEY_ID=your_aws_access_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 AWS_BUCKET_NAME=your_s3_bucket_name
@@ -65,7 +67,7 @@ AWS_BUCKET_NAME=your_s3_bucket_name
 
 > ❗️ **Never commit your `.env` file to GitHub.**
 > ✅ Instead, provide a `.env.example` if sharing the project.
-
+> Both should be in same .env file 
 ---
 
 ### ▶️ 4. Start the Backend Server
