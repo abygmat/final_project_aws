@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #bfdbfe;
+    }
+    header {
+      background: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 1rem 2rem;
+    }
+    header h1 {
+      font-size: 24px;
+      font-weight: bold;
+      color: #1f2937;
+    }
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 90vh;
+      padding: 2rem;
+    }
+    form {
+      background: white;
+      padding: 2rem;
+      padding-right: 3rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 0.5rem;
+    }
+    label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1.25rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #111827;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 2px #c7d2fe;
+    }
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #4f46e5;
+      color: white;
+      font-weight: 500;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #4338ca;
+    }
+    footer {
+      background: #1f2937;
+      color: white;
+      text-align: center;
+      padding: 1rem 2rem;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Contact Us</h1>
+  </header>
+
+  <main>
+    <form id="contactForm" onsubmit="handleSubmit(event)">
+      <h2>Reach Out to Our Team</h2>
+
+      <label for="name">Full Name</label>
+      <input type="text" id="name" placeholder="Enter your full name" required>
+
+      <label for="email">Email Address</label>
+      <input type="email" id="email" placeholder="Enter your email address" required>
+
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" placeholder="Enter your phone number" required>
+
+      <label for="subject">Subject</label>
+      <input type="text" id="subject" placeholder="Enter the subject" required>
+
+      <label for="message">Message</label>
+      <textarea id="message" rows="4" placeholder="Enter your message" required></textarea>
+
+      <button type="submit">Submit Inquiry</button>
+    </form>
+  </main>
+
+   <script>
+    function handleSubmit(event) {
+      event.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const subject = document.getElementById('subject').value.trim();
+      const message = document.getElementById('message').value.trim();
+
+      if (name && email && phone && subject && message) {
+        fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, phone, subject, message })
+        })
+        .then(res => res.json())
+        .then(data => {
+          alert(data.message || 'Thank you for your inquiry!');
+          document.getElementById('contactForm').reset();
+          window.location.href = 'home.html';
+        })
+        .catch(err => {
+          alert('Something went wrong. Please try again.');
+          console.error(err);
+        });
+      } else {
+        alert('Please fill out all fields.');
+      }
+    }
+  </script>
+
+</body>
+</html>

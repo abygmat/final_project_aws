@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Upload Product</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f7fb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1rem;
+      margin: 0;
+    }
+
+    form {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #2e3a59;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #556cd6;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 15px;
+    }
+
+    button:hover {
+      background-color: #3f51b5;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="uploadForm" enctype="multipart/form-data">
+  <h2>Add New Product</h2>
+  <input type="text" name="name" placeholder="Product Name" required />
+  <input type="text" name="price" placeholder="Price" required />
+  <textarea name="description" placeholder="Short Description" required></textarea>
+  <textarea name="specs" placeholder="Specifications" required></textarea>
+  <input type="file" name="image" accept="image/*" required />
+  <button type="submit">Upload Product</button>
+</form>
+
+<script>
+  document.getElementById('uploadForm').onsubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(document.getElementById('uploadForm'));
+
+    const res = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await res.json();
+    if (res.ok) {
+      alert('✅ Product uploaded');
+    } else {
+      alert('❌ Upload failed');
+    }
+  };
+</script>
+
+</body>
+</html>

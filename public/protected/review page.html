@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order Confirmation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .confirmation-box {
+      background-color: #ffffff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    .confirmation-box h2 {
+      font-size: 1.5rem;
+      color: #1f2937;
+      margin-bottom: 1.25rem;
+    }
+
+    .product-info {
+      background-color: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: left;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+
+    .product-info p {
+      margin: 0.5rem 0;
+      color: #374151;
+    }
+
+    .go-back {
+      display: inline-block;
+      background-color: #e5e7eb;
+      color: #1f2937;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .go-back:hover {
+      background-color: #d1d5db;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mobile optimization */
+    @media (max-width: 480px) {
+      .confirmation-box {
+        padding: 1.5rem;
+        border-radius: 10px;
+      }
+
+      .confirmation-box h2 {
+        font-size: 1.25rem;
+      }
+
+      .product-info {
+        font-size: 0.95rem;
+        padding: 0.85rem;
+      }
+
+      .go-back {
+        font-size: 0.95rem;
+        padding: 0.65rem 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="confirmation-box">
+    <h2>✅ Order Successfully Placed</h2>
+
+    <div class="product-info">
+  <p><strong>Order ID:</strong> <span id="orderId">Loading...</span></p>
+  <p><strong>Product ID:</strong> <span id="productId">Loading...</span></p>
+  <p><strong>Payment Method:</strong> <span id="paymentMethod">Loading...</span></p>
+</div>
+
+
+    <a href="home.html" class="go-back">← Go Back</a>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+    const paymentMethod = urlParams.get('payment');
+
+    if (!productId || !paymentMethod) {
+      document.querySelector('.product-info').innerHTML =
+        '<p style="color:red">❌ Missing product ID or payment method in URL.</p>';
+      return;
+    }
+
+    fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ productId, paymentMode: paymentMethod })
+
+    })
+    .then(async res => {
+      if (!res.ok) throw new Error(await res.text());
+      return res.json();
+    })
+    .then(data => {
+      document.getElementById('orderId').textContent = data.orderId;
+      document.getElementById('productId').textContent = data.productId;
+      document.getElementById('paymentMethod').textContent = paymentMethod.toUpperCase();
+    })
+    .catch(err => {
+      console.error('❌ Order failed:', err);
+      document.querySelector('.product-info').innerHTML =
+        '<p style="color:red">❌ Order could not be placed. Please log in first.</p>';
+    });
+  });
+</script>
+
+</body>
+
+</html>

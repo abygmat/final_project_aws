@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Payment Mode Selection</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fb;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      color: #222;
+    }
+
+    header {
+      background: linear-gradient(to right, #4a90e2, #6a82fb);
+      color: white;
+      padding: 1rem 2rem;
+      font-weight: bold;
+      font-size: 24px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    main {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .container {
+      background-color: white;
+      padding: 24px 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      width: 380px;
+      text-align: center;
+      color: #2e3a59;
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid #20b2aa;
+      padding-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .payment-option {
+      margin: 12px 0;
+      padding: 12px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      transition: background-color 0.3s;
+      font-size: 15px;
+      user-select: none;
+    }
+
+    .payment-option input[type="radio"] {
+      margin-right: 12px;
+      cursor: pointer;
+      accent-color: #20b2aa;
+      width: 18px;
+      height: 18px;
+    }
+
+    .payment-option:hover {
+      background-color: #e0ffff;
+    }
+
+    .payment-option.selected {
+      background-color: #e0ffff;
+      border-color: #20b2aa;
+    }
+
+    .payment-details {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      border: 1px solid #20b2aa;
+      border-radius: 6px;
+      background-color: #f8ffff;
+      text-align: left;
+    }
+
+    .payment-details.show {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #2e3a59;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: #20b2aa;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    button {
+      margin-top: 18px;
+      width: 100%;
+      padding: 12px;
+      background-color: #20b2aa;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+
+    button:hover {
+      background-color: #159a91;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    p#selected-payment {
+      margin-top: 14px;
+      font-size: 15px;
+      color: #20b2aa;
+      min-height: 1.2em;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    Select Payment Method
+  </header>
+
+  <main>
+    <div class="container">
+      <h2>Choose Payment Method</h2>
+
+      <div class="payment-option" onclick="selectPayment('card')">
+        <input type="radio" name="payment" value="card" /> Credit/Debit Card
+      </div>
+      
+      <div class="payment-details" id="card-details">
+        <div class="form-group">
+          <label for="card-number">Card Number</label>
+          <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="valid-thru">Valid Thru (MM/YY)</label>
+            <input type="text" id="valid-thru" placeholder="MM/YY" maxlength="5" />
+          </div>
+          <div class="form-group">
+            <label for="cvv">CVV</label>
+            <input type="text" id="cvv" placeholder="123" maxlength="4" />
+          </div>
+        </div>
+      </div>
+
+      <div class="payment-option" onclick="selectPayment('upi')">
+        <input type="radio" name="payment" value="upi" /> UPI
+      </div>
+      
+      <div class="payment-details" id="upi-details">
+        <div class="form-group">
+          <label for="upi-id">UPI ID</label>
+          <input type="text" id="upi-id" placeholder="yourname@paytm" />
+        </div>
+      </div>
+
+      <div class="payment-option" onclick="selectPayment('netbanking')">
+        <input type="radio" name="payment" value="netbanking" /> Net Banking
+      </div>
+      
+      <div class="payment-details" id="netbanking-details">
+        <div class="form-group">
+          <label for="bank-name">Select Bank</label>
+          <select id="bank-name">
+            <option value="">Choose your bank</option>
+            <option value="sbi">State Bank of India</option>
+            <option value="hdfc">HDFC Bank</option>
+            <option value="icici">ICICI Bank</option>
+            <option value="axis">Axis Bank</option>
+            <option value="fed">Federal Bank</option>
+            <option value="kotak">Kotak Mahindra Bank</option>
+            <option value="indov">Indian Overseas Bank</option>
+            <option value="ind">Indian Bank</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="payment-option" onclick="selectPayment('cod')">
+        <input type="radio" name="payment" value="cod" /> Cash on Delivery (CoD)
+      </div>
+
+      <button onclick="proceedPayment()">Proceed</button>
+      <p id="selected-payment"></p>
+    </div>
+  </main>
+
+  <script>
+  
+
+  let selectedMethod = '';
+
+  function selectPayment(method) {
+    // Clear all selections
+    const options = document.querySelectorAll('.payment-option');
+    const details = document.querySelectorAll('.payment-details');
+
+    options.forEach(option => option.classList.remove('selected'));
+    details.forEach(detail => detail.classList.remove('show'));
+
+    // Select the clicked option
+    event.currentTarget.classList.add('selected');
+    const radio = event.currentTarget.querySelector('input[type="radio"]');
+    radio.checked = true;
+
+    selectedMethod = method;
+
+    // Show corresponding details form
+    const detailsDiv = document.getElementById(`${method}-details`);
+    if (detailsDiv) {
+      detailsDiv.classList.add('show');
+    }
+
+    // Update selected payment text
+    const methodNames = {
+      'card': 'Credit/Debit Card',
+      'upi': 'UPI',
+      'netbanking': 'Net Banking',
+      'cod': 'Cash on Delivery'
+    };
+
+    document.getElementById('selected-payment').innerText = `${methodNames[method]} selected`;
+  }
+
+  function proceedPayment() {
+    if (!selectedMethod) {
+      alert('Please select a payment method.');
+      return;
+    }
+
+    // Validate inputs based on selected method
+    if (selectedMethod === 'card') {
+      const cardNumber = document.getElementById('card-number').value;
+      const validThru = document.getElementById('valid-thru').value;
+      const cvv = document.getElementById('cvv').value;
+
+      if (!cardNumber || !validThru || !cvv) {
+        alert('Please fill in all card details.');
+        return;
+      }
+
+      if (cardNumber.replace(/\s/g, '').length < 13) {
+        alert('Please enter a valid card number.');
+        return;
+      }
+
+      if (!/^\d{2}\/\d{2}$/.test(validThru)) {
+        alert('Please enter valid thru date in MM/YY format.');
+        return;
+      }
+
+      if (cvv.length < 3) {
+        alert('Please enter a valid CVV.');
+        return;
+      }
+    }
+
+    if (selectedMethod === 'upi') {
+      const upiId = document.getElementById('upi-id').value;
+      if (!upiId || !upiId.includes('@')) {
+        alert('Please enter a valid UPI ID (e.g., yourname@paytm).');
+        return;
+      }
+    }
+
+    if (selectedMethod === 'netbanking') {
+      const bankName = document.getElementById('bank-name').value;
+      if (!bankName) {
+        alert('Please select your bank.');
+        return;
+      }
+    }
+
+    // ✅ Get productId from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+
+    if (!productId) {
+      alert('Missing product ID. Please start again from the product page.');
+      window.location.href = 'home.html';
+      return;
+    }
+
+    // ✅ Redirect to review page with productId and payment method
+    window.location.href = `review page.html?id=${productId}&payment=${selectedMethod}`;
+  }
+
+  // Card input formatting
+  document.getElementById('card-number').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\s/g, '');
+    let formattedValue = value.replace(/(.{4})/g, '$1 ').trim();
+    e.target.value = formattedValue;
+  });
+
+  document.getElementById('valid-thru').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length >= 2) {
+      value = value.substring(0, 2) + '/' + value.substring(2, 4);
+    }
+    e.target.value = value;
+  });
+
+  document.getElementById('cvv').addEventListener('input', function(e) {
+    e.target.value = e.target.value.replace(/\D/g, '');
+  });
+</script>
+
+</body>
+</html>

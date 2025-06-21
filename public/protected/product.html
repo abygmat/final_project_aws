@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-blue-200 font-roboto">
+  <header class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto py-4 px-6">
+      <h1 class="text-2xl font-bold text-gray-800">Product Details</h1>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto py-12 px-6">
+    <div class="bg-white p-8 rounded-xl shadow-md">
+      <div class="flex flex-col md:flex-row gap-8">
+        <img id="productImage" class="h-32 w-48 rounded-lg object-contain md:w-1/3" alt="Product Image">
+        <div class="w-full md:w-1/2">
+          <h2 id="productName" class="text-2xl font-semibold text-gray-800 mb-2"></h2>
+          <p id="productPrice" class="text-lg font-medium text-indigo-600 mb-4"></p>
+          <p id="productDescription" class="text-gray-600 mb-4"></p>
+          <ul id="productSpecs" class="text-gray-600 mb-6 list-disc list-inside"></ul>
+          <button onclick="handleBuyClick()" class="w-full bg-indigo-600 text-white p-3 rounded-md font-medium hover:bg-indigo-700 hover:shadow-md transition-all duration-200">Buy Now</button>
+          <a href="home.html" class="block mt-4 text-center text-indigo-600 hover:underline">Back to Products</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-gray-800 text-white py-4">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <p class="text-sm">© 2025 MyShop. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+  function loadProductDetails() {
+    const productData = localStorage.getItem('selectedProduct');
+    if (!productData) {
+      alert('No product data found. Please return to the homepage.');
+      window.location.href = 'home.html';
+      return;
+    }
+
+    const product = JSON.parse(productData);
+
+    document.getElementById('productImage').src = product.image;
+    document.getElementById('productName').textContent = product.name;
+    document.getElementById('productPrice').textContent = product.price;
+    document.getElementById('productDescription').textContent = product.description;
+
+    const specsList = document.getElementById('productSpecs');
+    specsList.innerHTML = '';
+    product.specs.forEach(spec => {
+      const li = document.createElement('li');
+      li.textContent = spec;
+      specsList.appendChild(li);
+    });
+  }
+
+  function handleBuyClick() {
+    const productData = localStorage.getItem('selectedProduct');
+    if (productData) {
+      const product = JSON.parse(productData);
+      window.location.href = `pay.html?id=${product.id}`;
+    } else {
+      alert("No product selected.");
+    }
+  }
+
+  loadProductDetails();
+</script>
+
+</body>
+</html>
