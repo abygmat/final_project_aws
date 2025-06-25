@@ -4,7 +4,7 @@ const multer = require('multer');
 const AWS = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const dotenv = require('dotenv');
-const Product = require('../models/product'); // ✅ Import model
+const Product = require('../models/product');
 dotenv.config();
 
 // ✅ Configure AWS S3
@@ -14,12 +14,12 @@ const s3 = new AWS.S3({
   region: process.env.AWS_REGION,
 });
 
-// ✅ Multer + S3 setup
+// ✅ Multer + S3 setup (🔧 ACL removed)
 const upload = multer({
   storage: multerS3({
     s3: s3,
     bucket: process.env.AWS_BUCKET_NAME,
-    acl: 'public-read',
+    // ❌ Removed: acl: 'public-read'
     contentType: multerS3.AUTO_CONTENT_TYPE,
     key: function (req, file, cb) {
       const fileName = `${Date.now()}-${file.originalname}`;

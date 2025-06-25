@@ -1,16 +1,18 @@
+// Load environment variables from .env
+require('dotenv').config();
+console.log("MONGODB_URI is:", process.env.MONGODB_URI);
+
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const path = require('path');
 
-dotenv.config();
 const app = express();
 
-// ✅ CORS (for frontend on localhost)
+// ✅ CORS (adjust if using a different frontend port)
 app.use(cors({
-  origin: 'http://localhost:3000', // update if using a different port
+  origin: 'http://localhost:3000',
   credentials: true
 }));
 
@@ -18,54 +20,62 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ Session config
+// ✅ Session setup
 app.use(session({
-  secret: 'your_secret_key',
+  secret: 'your_secret_key', // you can also move this to .env
   resave: false,
   saveUninitialized: true,
   cookie: {
-    secure: false,        // ⚠️ Keep false for HTTP (localhost)
+    secure: false, // true if using HTTPS
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 // 1 day
   }
 }));
 
-// ✅ Serve static files
+// ✅ Serve static frontend files
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ✅ MongoDB connection
-mongoose.connect(process.env.MONGO_URI, { dbName: 'awswebpage' })
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  dbName: 'awswebpage2'
+})
   .then(() => {
     console.log('✅ Connected to MongoDB');
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
       console.log(`🚀 Server running at http://localhost:${PORT}`);
     });
   })
   .catch(err => console.error('❌ DB Connection Error:', err));
 
-// ✅ Route files
+// ✅ Load route files
 const authRoutes = require('./routes/auth');
 const contactRoutes = require('./routes/contact');
 const orderRoutes = require('./routes/order');
+const uploadRoutes = require('./routes/upload');
+const productRoutes = require('./routes/product');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api', uploadRoutes);
+app.use('/api', productRoutes);
 
-// ✅ Middleware to protect login-required pages
+// ✅ Middleware: check if user is logged in
 function isAuthenticated(req, res, next) {
-  if (req.session.userId) next();
-  else res.redirect('/login.html');
+  if (req.session.userId) return next();
+  return res.redirect('/login.html');
 }
 
-// ✅ Admin-only middleware
+// ✅ Middleware: check if user is admin
 function isAdmin(req, res, next) {
-  if (req.session.isAdmin) next();
-  else res.status(403).send('⛔ Access denied: Admins only');
+  if (req.session.isAdmin) return next();
+  return res.status(403).send('⛔ Access denied: Admins only');
 }
 
-// ✅ General protected pages (like home.html)
+// ✅ Protected pages
 app.get('/protected/:page', isAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, `public/protected/${req.params.page}`));
 });
@@ -75,7 +85,7 @@ app.get('/protected/admin.html', isAuthenticated, isAdmin, (req, res) => {
   res.sendFile(path.join(__dirname, 'public/protected/admin.html'));
 });
 
-// ✅ Debug route to check session (optional)
+// ✅ Debug: check session info
 app.get('/api/debug/session', (req, res) => {
   res.json({ session: req.session });
 });
@@ -84,11 +94,3 @@ app.get('/api/debug/session', (req, res) => {
 app.get('/', (req, res) => {
   res.redirect('/login.html');
 });
-
-// ✅ Upload routes
-const uploadRoutes = require('./routes/upload');
-app.use('/api', uploadRoutes);
-
-// ✅ Product routes
-const productRoutes = require('./routes/product');
-app.use('/api', productRoutes);
