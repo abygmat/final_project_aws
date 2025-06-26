@@ -2,7 +2,7 @@
 
 A simple full-stack e-commerce site built using **HTML, CSS, JavaScript (frontend)** and **Node.js + Express + MongoDB (backend)**.
 
-Live GitHub Repo: [https://github.com/Devadevan-B-P/awswebpage](https://github.com/Devadevan-B-P/awswebpage)
+Live GitHub Repo: [https://github.com/abygmat/final_project_aws](https://github.com/abygmat/final_project_aws)
 
 ---
 
